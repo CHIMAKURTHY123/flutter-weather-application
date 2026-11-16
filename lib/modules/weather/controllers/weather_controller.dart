@@ -73,6 +73,15 @@ class WeatherController extends GetxController {
     }
   }
 
+  Future<bool> refreshWeather() {
+    final city = searchedCity.value;
+    if (city.isEmpty) {
+      errorMessage.value = 'Search for a city before refreshing weather.';
+      return Future.value(false);
+    }
+    return searchWeather(city, openResult: false);
+  }
+
   Future<void> clearHistory() async {
     await historyController.clear();
   }

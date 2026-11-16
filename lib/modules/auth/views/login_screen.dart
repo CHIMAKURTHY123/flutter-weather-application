@@ -27,7 +27,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _submit() async {
     final success = await _controller.login(_email.text, _password.text);
-    if (success) Get.offAllNamed(AppRoutes.dashboard);
+    if (success) {
+      Get.snackbar('Signed in', 'Welcome back to SkyCast.');
+      Get.offAllNamed(AppRoutes.dashboard);
+    }
   }
 
   @override

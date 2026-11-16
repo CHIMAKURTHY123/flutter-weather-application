@@ -33,7 +33,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _password.text,
       _confirmPassword.text,
     );
-    if (success) Get.offAllNamed(AppRoutes.dashboard);
+    if (success) {
+      Get.snackbar('Account created', 'You are signed in and ready to go.');
+      Get.offAllNamed(AppRoutes.dashboard);
+    }
   }
 
   @override

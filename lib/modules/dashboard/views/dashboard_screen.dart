@@ -48,6 +48,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           onPressed: () => Get.toNamed(AppRoutes.history),
           icon: const Icon(Icons.history_rounded),
         ),
+        Obx(
+          () => IconButton(
+            tooltip: 'Refresh weather',
+            onPressed:
+                _weather.weather.value == null || _weather.isLoading.value
+                ? null
+                : _weather.refreshWeather,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ),
         if (Get.isRegistered<AuthController>())
           IconButton(
             tooltip: 'Sign out',
