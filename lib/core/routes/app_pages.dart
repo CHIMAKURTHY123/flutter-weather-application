@@ -9,6 +9,7 @@ import '../../modules/history/views/history_screen.dart';
 import '../../modules/weather/views/weather_details_screen.dart';
 import '../../shared/widgets/firebase_setup_screen.dart';
 import 'app_routes.dart';
+import 'auth_middleware.dart';
 
 class AppPages {
   static final pages = <GetPage<dynamic>>[
@@ -19,12 +20,25 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.login, page: () => const LoginScreen()),
     GetPage(name: AppRoutes.register, page: () => const RegisterScreen()),
-    GetPage(name: AppRoutes.dashboard, page: () => const DashboardScreen()),
-    GetPage(name: AppRoutes.citySearch, page: () => const CitySearchScreen()),
+    GetPage(
+      name: AppRoutes.dashboard,
+      page: () => const DashboardScreen(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: AppRoutes.citySearch,
+      page: () => const CitySearchScreen(),
+      middlewares: [AuthMiddleware()],
+    ),
     GetPage(
       name: AppRoutes.weatherDetails,
       page: () => const WeatherDetailsScreen(),
+      middlewares: [AuthMiddleware()],
     ),
-    GetPage(name: AppRoutes.history, page: () => const HistoryScreen()),
+    GetPage(
+      name: AppRoutes.history,
+      page: () => const HistoryScreen(),
+      middlewares: [AuthMiddleware()],
+    ),
   ];
 }
