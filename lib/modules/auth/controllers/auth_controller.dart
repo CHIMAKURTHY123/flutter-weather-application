@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../core/routes/app_routes.dart';
 import '../../../data/services/auth_service.dart';
+import 'auth_input_validator.dart';
 
 class AuthController extends GetxController {
   AuthController({AuthService? service}) : _service = service ?? AuthService();
@@ -24,12 +25,12 @@ class AuthController extends GetxController {
   }
 
   bool validateCredentials(String email, String password) {
-    if (!GetUtils.isEmail(email.trim())) {
-      errorMessage.value = 'Enter a valid email address.';
-      return false;
-    }
-    if (password.length < 6) {
-      errorMessage.value = 'Password must be at least 6 characters.';
+    final validationMessage = AuthInputValidator.validateCredentials(
+      email,
+      password,
+    );
+    if (validationMessage != null) {
+      errorMessage.value = validationMessage;
       return false;
     }
     return true;
@@ -46,8 +47,12 @@ class AuthController extends GetxController {
     String confirmPassword,
   ) async {
     if (!validateCredentials(email, password)) return false;
-    if (password != confirmPassword) {
-      errorMessage.value = 'Passwords do not match.';
+    final confirmationMessage = AuthInputValidator.validatePasswordConfirmation(
+      password,
+      confirmPassword,
+    );
+    if (confirmationMessage != null) {
+      errorMessage.value = confirmationMessage;
       return false;
     }
     return _run(() => _service.register(email, password));

@@ -18,7 +18,7 @@ class HistoryScreen extends GetView<HistoryController> {
           () => TextButton(
             onPressed: controller.recentCities.isEmpty
                 ? null
-                : controller.clear,
+                : () => _confirmClear(context),
             child: const Text('Clear'),
           ),
         ),
@@ -85,4 +85,27 @@ class HistoryScreen extends GetView<HistoryController> {
       );
     }),
   );
+
+  Future<void> _confirmClear(BuildContext context) async {
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('Clear search history?'),
+        content: const Text(
+          'This removes all saved city searches from this device.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Get.back(result: true),
+            child: const Text('Clear history'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+    if (confirmed == true) await controller.clear();
+  }
 }

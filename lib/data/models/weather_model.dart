@@ -23,7 +23,8 @@ class WeatherModel {
 
   String get displayLocation =>
       countryCode.isEmpty ? cityName : '$cityName, $countryCode';
-  String get iconUrl => 'https://openweathermap.org/img/wn/$icon@2x.png';
+  String get iconUrl =>
+      icon.isEmpty ? '' : 'https://openweathermap.org/img/wn/$icon@2x.png';
   double? get visibilityKilometers =>
       visibilityMeters == null ? null : visibilityMeters! / 1000;
 

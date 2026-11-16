@@ -1,37 +1,118 @@
-﻿# Flutter Weather Application
+# SkyCast — Flutter Weather Application
 
-A Flutter weather app built with GetX, Dio, GetStorage, `flutter_dotenv`, and Firebase Authentication.
-
-## Requirements
-
-- Flutter 3.50.0 / Dart 3.14.0 or compatible versions.
-- An OpenWeather API key.
-- A Firebase project with Email/Password sign-in enabled for authentication.
-
-## Local setup
-
-1. Copy `.env.example` to `.env` and replace `YOUR_OPENWEATHER_API_KEY` with your own key. `.env` is ignored by Git.
-2. Run `flutter pub get`.
-3. To configure authentication and Chrome, create a Firebase project, enable Email/Password in Authentication, register a Web app, then run `dart pub global activate flutterfire_cli` and `flutterfire configure`. Add Firebase options initialization using the generated `firebase_options.dart` before `Firebase.initializeApp()` in `lib/main.dart`.
-4. Run `flutter run -d chrome`.
-
-The app starts on a Firebase setup screen if Firebase has not been configured; you can continue to weather search as a guest. Sign in and registration require valid Firebase platform configuration. Firebase configuration is not included in this repository.
+SkyCast is a cross-platform weather app built for an internship project. Users can search for a city, view current conditions, and revisit recent searches. Email/password accounts are provided through Firebase when platform configuration is supplied.
 
 ## Features
 
-- Responsive blue-gradient dashboard with greeting, date, current conditions, weather icon, and metric cards.
-- City search screen and separate current-weather details screen.
-- Celsius temperature, feels-like temperature, humidity, wind speed, and visibility when OpenWeather includes it.
-- Loading, invalid city, invalid key, timeout, and connection error states.
-- Firebase email/password registration and login with persistent Firebase sessions, once configured.
-- Recent successful searches stored locally with duplicate cities removed, weather snapshots, and a clear-history action.
+- Current weather by city from OpenWeather.
+- Celsius temperature, description, weather icon, feels-like temperature, humidity, wind speed, and visibility when provided by the API.
+- Responsive dashboard, city search, and weather details screens.
+- Loading, empty-input, invalid-city, invalid-key, timeout, and network error states.
+- Recent successful searches saved on device, duplicate cities updated in recent-first order, and clear-history confirmation.
+- Firebase email/password registration, login, persistent auth state, and logout after Firebase setup.
+- Guest mode for weather search when Firebase has not been configured.
 
-The configured `/weather` endpoint returns current conditions. It does not provide hourly forecasts, so the app does not show a fabricated forecast.
+This version uses OpenWeather's current `/weather` endpoint. That endpoint does not return an hourly forecast, so no forecast is shown.
 
-## API key note
+## Technologies
 
-`.env` is excluded from Git, but Flutter assets are packaged into the client application. A key used by a distributed mobile or web app can be extracted. Restrict the OpenWeather key where possible, rotate any key that was exposed, and use a backend proxy for production.
+- Flutter 3.50 / Dart 3.14
+- GetX for state and navigation
+- Dio for HTTP requests
+- OpenWeather current weather API
+- GetStorage for local history
+- Firebase Core and Firebase Authentication
+- `flutter_dotenv` for local environment values
 
-## GitHub submission
+## Architecture
 
-Before publishing, check that `.env` and Firebase service credentials are not staged. Commit `.env.example`, source code, this README, and screenshots. Do not commit `android/app/google-services.json`, iOS `GoogleService-Info.plist`, or private signing files. Firebase web configuration is client configuration, but apply Firebase Auth domain restrictions and security rules.
+The project separates the user interface, state controllers, data access, and shared widgets:
+
+```text
+lib/
+├── main.dart
+├── core/
+│   ├── bindings/       # App-wide GetX dependency registration
+│   ├── constants/      # API endpoint and configuration keys
+│   ├── routes/         # GetX route names and pages
+│   └── theme/          # Shared theme
+├── data/
+│   ├── models/         # Weather response model
+│   ├── providers/      # Dio/OpenWeather requests
+│   ├── repositories/   # Provider-to-model boundary
+│   └── services/       # Firebase auth and local search history
+├── modules/
+│   ├── auth/           # Login, registration, auth controller
+│   ├── dashboard/      # Weather dashboard and city search
+│   ├── history/        # Search history controller and screen
+│   └── weather/        # Weather controller and details view
+└── shared/widgets/     # Reusable auth and weather cards
+```
+
+## Setup
+
+### 1. Install packages
+
+Install Flutter 3.50 or a compatible Flutter/Dart version, then run:
+
+```bash
+flutter pub get
+```
+
+### 2. Configure OpenWeather
+
+Copy `.env.example` to `.env` and enter your own key:
+
+```env
+OPENWEATHER_API_KEY=your_key_here
+DEFAULT_CITY=London
+```
+
+`.env` is ignored by Git. Flutter includes declared assets in the built client, so the key can still be extracted from a compiled web/mobile app. Restrict the key for development and use a backend proxy for production. Rotate any key that has been exposed.
+
+### 3. Configure Firebase (optional for guest weather)
+
+1. Create a Firebase project and enable **Authentication → Sign-in method → Email/Password**.
+2. Install and run FlutterFire configuration:
+
+   ```bash
+   dart pub global activate flutterfire_cli
+   flutterfire configure
+   ```
+
+3. In `lib/main.dart`, import the generated `firebase_options.dart` and initialize Firebase with:
+
+   ```dart
+   await Firebase.initializeApp(
+     options: DefaultFirebaseOptions.currentPlatform,
+   );
+   ```
+
+FlutterFire configures the selected platform files/options. Firebase sign-in cannot be tested until this setup is completed. Do not commit private service credentials. Web Firebase configuration is client-side configuration; restrict authorized domains and configure Firebase security rules.
+
+## Run and verify
+
+```bash
+dart format .
+flutter analyze
+flutter test
+flutter run -d chrome
+```
+
+If Firebase is not configured, the app displays setup guidance and offers guest weather access. A valid OpenWeather key and internet connection are required for live searches.
+
+## Screenshots
+
+No screenshots are included yet. Run the app with valid API configuration, capture the dashboard, city search, weather details, history, login, and registration screens, and save them under `screenshots/`. See [`screenshots/README.md`](screenshots/README.md) for suggested filenames. Do not use mock weather values in submission screenshots.
+
+## Future enhancements
+
+- Add forecast support through OpenWeather's forecast endpoint.
+- Use a backend proxy to protect weather API credentials.
+- Add Firebase platform configuration and verify end-to-end account flows.
+- Add unit and integration tests for API error cases and auth flows.
+- Add location-based weather and accessibility refinements.
+
+## GitHub safety
+
+Before pushing, verify `.env` is ignored and no Firebase service credential files are staged. Commit `.env.example`, not `.env`. This project expects the existing `main` branch; review `git status` and remote changes before pushing.

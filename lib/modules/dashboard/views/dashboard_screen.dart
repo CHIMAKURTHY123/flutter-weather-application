@@ -270,7 +270,7 @@ class _WeatherOverview extends StatelessWidget {
             WeatherMetricCard(
               label: 'Visibility',
               value: weather.visibilityKilometers == null
-                  ? '—'
+                  ? '\u2014'
                   : '${weather.visibilityKilometers!.toStringAsFixed(1)} km',
               icon: Icons.visibility_outlined,
             ),
@@ -382,7 +382,7 @@ class _RecentCities extends StatelessWidget {
                                   const Icon(Icons.cloud_outlined),
                             ),
                           Text(
-                            '${city.temperature.toStringAsFixed(0)}°',
+                            '${city.temperature.toStringAsFixed(0)}\u00B0C',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
